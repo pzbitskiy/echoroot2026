@@ -34,7 +34,7 @@ Then only days later it was all finished and sitting in the livingroom to serve 
 Time for a demo :)
 
 <div class="video-container">
-<video src="https://gitlab.com/AndreRH/echoroot/-/raw/master/page/demo.webm" controls="true" data-setup="{}" data-title="The demo video of the alternative voice recognition" preload="metadata" width="768"></video><p><a href="https://gitlab.com/AndreRH/echoroot/-/raw/master/page/demo.webm" target="_blank" rel="noopener noreferrer" title="Download 'The demo video of the alternative voice recognition'">The demo video of the alternative voice recognition</a></p>
+<video src="https://gitlab.com/AndreRH/echoroot/-/raw/master/page/demo.webm" controls="true" data-setup="{}" data-title="The demo video of the alternative voice recognition" preload="metadata" width="95%"></video><p><a href="https://gitlab.com/AndreRH/echoroot/-/raw/master/page/demo.webm" target="_blank" rel="noopener noreferrer" title="Download 'The demo video of the alternative voice recognition'">The demo video of the alternative voice recognition</a></p>
 </div>
 
 ## TLDR
