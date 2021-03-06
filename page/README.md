@@ -30,7 +30,7 @@ I know, the models and libraries are proprietary, but it’s a fair choice for a
 With some hints from "Alexa, are you listening" and the Porcupine examples I quickly was able to stream the audio over network to a more powerful machine as soon as the wake-word was detected. Nice.
 So what to do with that voice snippet these days? As I said, 3 years have passed, and in that time [voice2json][v2j] was created. Amazing! It wasn’t hard to create intents for my tasks and let them trigger the necessary actions.
 Next there was the LED ring. I wanted to use the original service for it, with all its conveniences. But how to communicate with it? Well, it uses a IPC library from lab26 called… lipc. I gave Google a chance to bring up more about it and... wow! I’m not the only guy doing such crazy things! There’s [openLIPC][olipc] from some Kindle hackers, that was unexpected! I’m not using it yet, but I plan to incorporate it soon.
-Then only days later it was all finished and sitting in the livingroom to serve commanded by voice. FINALLY! And yes, I'll open source relevant parts here soon.
+Then only days later it was all finished and sitting in the livingroom to serve commanded by voice. FINALLY! And yes, I'll open source relevant parts [here][repo] soon.
 Time for a demo :)
 
 <div class="video-container">
@@ -69,6 +69,7 @@ and Zebediah Figura for spell/style fixes
 [porc]: https://github.com/Picovoice/porcupine
 [v2j]: https://github.com/synesthesiam/voice2json
 [olipc]: https://arkq.github.io/openlipc/
+[repo]: https://gitlab.com/AndreRH/echoroot
 
 [dockingstation]: dockingstation.jpg
 
