@@ -38,14 +38,24 @@ This winter I had time for another sprint and simply decided I’d make it this 
 That plan went so smoothly that after some hours/days (who counts?) I was already in need of a wake-word detection. I had previously stumbled upon [Snips][snips], but 3 years have passed and Snips isn’t what it was [anymore][sonos]. But hey, 3 years have passed and other things have been created: [Porcupine][pico], which recently added "Jarvis" and other words to their [github repository][porc] together with an SDK under Apache 2.0.
 I know, the models and libraries are proprietary, but it’s a fair choice for a wake-word detection and it works brilliantly. Just not directly for me. The Echo firmware is still not hardfloat enabled, so I needed a second rootfs with hardfloat to chroot into. Easy, thanks to buildroot.
 With some hints from "Alexa, are you listening" and the Porcupine examples I quickly was able to stream the audio over network to a more powerful machine as soon as the wake-word was detected. Nice.
+
 So what to do with that voice snippet these days? As I said, 3 years have passed, and in that time [voice2json][v2j] was created. Amazing! It wasn’t hard to create intents for my tasks and let them trigger the necessary actions.
 Next there was the LED ring. I wanted to use the original service for it, with all its conveniences. But how to communicate with it? Well, it uses a IPC library from lab26 called… lipc. I gave Google a chance to bring up more about it and... wow! I’m not the only guy doing such crazy things! There’s [openLIPC][olipc] from some Kindle hackers, that was unexpected! I’m not using it yet, but I plan to incorporate it soon.
-Then only days later it was all finished and sitting in the livingroom to serve commanded by voice. FINALLY! And yes, I'll open source relevant parts [here][repo] soon.
+Then only days later it was all finished and sitting in the livingroom to serve commanded by voice. FINALLY!
 Time for a demo :)
 
 <div class="video-container">
 <video src="https://gitlab.com/AndreRH/echoroot/-/raw/master/page/demo.webm" controls="true" data-setup="{}" data-title="The demo video of the alternative voice recognition" preload="metadata" width="95%"></video><p><a href="https://gitlab.com/AndreRH/echoroot/-/raw/master/page/demo.webm" target="_blank" rel="noopener noreferrer" title="Download 'The demo video of the alternative voice recognition'">The demo video of the alternative voice recognition</a></p>
 </div>
+
+## What's next?
+* As soon as I have time, I'll start adding some components of my endeavor in this [repository][repo]. The rootfs creation is a good first candidate I think.
+* The system can now control every relevant lights, can tell jokes, and more. A logical next step might be to connect it to an assistant like [Mycroft][mycroft].
+  On the other hand I'm happy as it is now, just nice to see there are upgrades available.
+* As multiple wake-words are allowed (see the demo video), I plan to add one for my other hobby project.
+  It's a modified RC car with a camera, controlled by a Raspberry Pi Zero W, and supposed to find its way through my home itself.
+  So being able to say something like "come to the living room", and the car does that, might be a good new feature.
+  Maybe more on that at a later point.
 
 ## TLDR
 I replaced Alexa with my own solution on an Amazon Echo from 2016 and will open source relevant parts of it here soon.
@@ -80,6 +90,7 @@ and Zebediah Figura for spell/style fixes
 [v2j]: https://github.com/synesthesiam/voice2json
 [olipc]: https://arkq.github.io/openlipc/
 [repo]: https://gitlab.com/AndreRH/echoroot
+[mycroft]: https://mycroft.ai/
 
 [dockingstation]: dockingstation.jpg
 [soldered]: soldered.jpg
