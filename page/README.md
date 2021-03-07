@@ -12,13 +12,23 @@ But… it was horrible, you had to scream through the room to have a 25% chance 
 Luckily I spotted a great blog post from F-Secure, ["Alexa, are you listening"][fsec], which was in turn based on the [Cook/Clinton paper][ccpaper].
 They used the debug interface of the device to gain access to it, and streamed the microphone audio signal to another device. So hey, that’s what I wanted: the Echo had a microphone array, and could recognize everything much better with it, and was "jailbreakable"! Around that time I also learned about other microphone array projects like the [ReSpeaker][resp], but my focus stayed on the Echo. So about 3 years ago I bought an Echo (second hand) and asked a friend to 3D-print me a docking station for it.
 
-![The 3D-printed and wired dockingstation][dockingstation]
+![The 3D-printed and wired docking station][dockingstation]
 
 I inserted some pogopins and gained control. A microSD adapter is perfect for wiring, and you can get a ready-to-use image from the [echohacking wiki][hackwiki].
 
 ## The bad idea
-I was shocked. The system was outdated, even back then. A 2.6.x kernel and a rootfs based on an ancient glibc. Nothing I could easily turn into some open source powered voice assistant I thought. So I quickly made a plan to port a recent kernel to it and build an up-to-date rootfs with [buildroot][br2]. The latter was quickly achieved, but for the kernel more time was needed to get it going.
-As I was also busy with other things, I worked on it once in a while, but eventually made it to a point when I was able to upstream the first bits, namely a device tree which landed in [5.6][l56]. I noticed at an early point that there were no drivers for the [microphones][ifixit], and it took me ages to figure out that there was already a driver for the codec connected to the speaker, but it wasn’t easy to get it running.
+I was shocked. The system was outdated, even back then. A 2.6.x kernel and a rootfs based on an ancient glibc.
+Nothing I could easily turn into some open source powered voice assistant I thought.
+So I quickly made a plan to port a recent kernel to it and build an up-to-date rootfs with [buildroot][br2].
+The latter was quickly achieved, but for the kernel more time was needed to get it going.
+As I was also busy with other things, I worked on it once in a while,
+but eventually made it to a point when I was able to upstream the first bits,
+namely a device tree which landed in [5.6][l56].
+The docking station wasn't suitable enough for longer periods of work, so finally I had to solder everything to the bottom board:
+
+![The soldered bottom board][soldered]
+
+I noticed at an early point that there were no drivers for the [microphones][ifixit], and it took me ages to figure out that there was already a driver for the codec connected to the speaker, but it wasn’t easy to get it running.
 I first had some success with the microphones by porting the driver of another Echo device for the 4.14 kernel, and later even upstreamed the speaker part, which will land in [5.12][l512].
 
 So with the microphones working on an open system, I tried [ODAS][odas] to filter out my voice. Bad news: the Echo was by far too slow for that task. The original firmware uses the built-in DSP for that task, but guess what, the drivers are only available for [2.6.x kernels][dsp1], or at best in a broken state until [3.16][dsp2]. And even if I had the drivers, the DSP code would still be proprietary. So what to do?
@@ -72,5 +82,6 @@ and Zebediah Figura for spell/style fixes
 [repo]: https://gitlab.com/AndreRH/echoroot
 
 [dockingstation]: dockingstation.jpg
+[soldered]: soldered.jpg
 
 [![Flattr Button](http://api.flattr.com/button/button-static-50x60.png "Flattr This!")](https://flattr.com/@andre_opensource "andre_opensource")
