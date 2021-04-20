@@ -1,0 +1,4 @@
+[submodule "rootfs/buildroot"]
+	path = rootfs/buildroot
+	url = https://github.com/AndreRH/buildroot.git
+	branch = linux-2.6.37
