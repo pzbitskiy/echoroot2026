@@ -2,3 +2,6 @@
 	path = rootfs/buildroot
 	url = https://github.com/AndreRH/buildroot.git
 	branch = linux-2.6.37
+[submodule "u-boot"]
+	path = u-boot
+	url = https://gitlab.com/AndreRH/u-boot-echo
