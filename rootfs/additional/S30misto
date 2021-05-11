@@ -1,0 +1,51 @@
+#!/bin/sh
+#
+# Start Echo
+#
+
+case "$1" in
+ start)
+	printf "Starting misto..."
+	insmod /lib/modules/`uname -r`/compat.ko
+	insmod /lib/modules/`uname -r`/cfg80211.ko
+	insmod /lib/modules/`uname -r`/ath6kl_sdio.ko reg_domain=0x8114 ath6kl_p2p=0x613 ath6kl_roam_mode=0x2 bdatapath=/lib/firmware/ath6k/AR6004/hw3.0/bdata.bin debug_quirks=0x00a02008
+	#        ath6kl_wifi_mac=de:ad:be:ef:ca:fe
+	insmod /lib/modules/`uname -r`/cmemk.ko phys_start=0x8D800000 phys_end=0x8DA00000 allowOverlap=1 useHeapIfPoolUnavailable=1
+	insmod /lib/modules/`uname -r`/dsplinkk.ko
+	insmod /lib/modules/`uname -r`/lpm_omap3530.ko
+	source /etc/misto/audioproxyd
+	ln -sf /usr/local/lib/* /usr/lib/
+	/usr/local/bin/shmq_tool -m 0 -S ${AUDIO_INPUT} -n 95232
+	/usr/local/bin/shmq_tool -m 0 -S ${AUDIO_INPUT2} -n 16000
+	/usr/local/bin/shmq_tool -m 0 -S ${AUDIOD_SHMQ} -n 3000
+	/usr/local/bin/shmbuf_tool -m 0 -S ${AUDIO_OUTPUT}  -n 1048575
+	/usr/local/bin/shmbuf_tool -m 0 -S ${AUDIO_PHONE_MIC}  -n 16000
+	/usr/local/bin/shmbuf_tool -m 0 -S ${AUDIO_REMOTE_MIC} -n 16000
+	/usr/local/bin/shmbuf_tool -m 0 -S ${AUDIO_VOIP_MIC} -n 16000
+	/usr/local/bin/shmbuf_tool -m 0 -S ${AUDIO_PLAYBACK_AVG_POWER} -s 4 -n 50
+	/usr/local/bin/shmbuf_tool -m 0 -S ${AUDIO_TRAIT_REPORT} -s 24 -n 128
+	/usr/local/bin/shmbuf_tool -m 0 -S ${ASR_METADATA_SHM} -s 1 -n 131072
+	chmod 0660 /dev/shm/*
+	chgrp audio /dev/shm/*
+	chown messagebus:messagebus /var/run/dbus
+	mkfifo /tmp/spy
+	/usr/local/bin/audioproxyd -s2 -c2 -i ${AUDIO_INPUT} -i ${AUDIO_INPUT2} -o ${AUDIO_OUTPUT} -o ${AUDIO_PHONE_MIC} -o ${AUDIO_VOIP_MIC} -t ${AUDIO_TRAIT_REPORT} -r ${AUDIO_PLAYBACK_AVG_POWER} &
+	/usr/local/bin/audioCtrl ${AUDIOD_SHMQ}
+	/usr/local/bin/ledd -t ${AUDIO_TRAIT_REPORT}
+	/usr/local/bin/buttond &
+	/usr/sbin/bluetoothd
+	/usr/sbin/hciattach -n /dev/ttyO2 ath3k 3000000 flow nosleep DEADBEEFCAFE &
+	/usr/local/bin/btmd-ng
+
+	echo "OK"
+	;;
+  stop)
+	;;
+  restart|reload)
+	;;
+  *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+exit $?

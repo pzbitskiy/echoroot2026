@@ -310,7 +310,7 @@ DL_FILE_NAMES := $(addprefix dl/,$(notdir $(DL_PATH_URLS)))
 DL_FILE_NAMES_DONE := $(addsuffix .done,$(DL_FILE_NAMES))
 DL_BASE_URL := https://d1s31zyz7dcc2d.cloudfront.net/
 
-all: extract
+all: merge
 .PHONY: clean download extract
 
 # $(1): DL_FILE_NAME
@@ -350,3 +350,89 @@ download: $(DL_FILE_NAMES)
 extract: $(DL_FILE_NAMES_DONE)
 	@echo "extraction successfully"
 
+br2echo/images/rootfs.tar: buildroot/Makefile br2echo/.config
+	make -C br2echo
+
+merge: extract br2echo/images/rootfs.tar
+	@rm -rf out
+	@mkdir out
+	@cp -ral orig/* out/
+	# get glibc 2.23!
+	@cp -ra br2echo/target/lib/* out/lib/
+	# get own init system :)
+	@rm -rf out/etc/init.d/*
+	@rm out/bin/busybox
+	@find out/bin/ -xtype l -exec rm {} \;
+	@find out/sbin/ -xtype l -exec rm {} \;
+	@cp -ra br2echo/target/sbin/* out/sbin/
+	@cp -ra br2echo/target/bin/* out/bin/
+	@cp -ra br2echo/target/etc/ssh out/etc/
+	echo "PermitRootLogin yes" >> out/etc/ssh/sshd_config
+	@cp -ra br2echo/target/etc/fstab out/etc/
+	@cp -ra br2echo/target/etc/inittab out/etc/
+	@cp -ra br2echo/target/etc/init.d/* out/etc/init.d/
+	@rm -f out/etc/init.d/S49ntp
+	@rm -f out/etc/init.d/S50stunnel
+	# set password
+	@cat br2echo/target/etc/shadow | grep -m 1 root | awk '{split($$0,a,":"); print a[2]}' > br2echo/tmp_brpw
+	@echo -n "root:" > out/etc/passwd.new
+	@cat br2echo/tmp_brpw | tr -d '\n' >> out/etc/passwd.new
+	@rm br2echo/tmp_brpw
+	@echo ":0:0:root:/home/root:/bin/sh" >> out/etc/passwd.new
+	@tail -n +2 out/etc/passwd >> out/etc/passwd.new
+	@mv out/etc/passwd.new out/etc/passwd
+	# tweak more things
+	@cp -a additional/S30misto out/etc/init.d/
+	@cp -a additional/S50pulseaudio out/etc/init.d/
+	@cp -ra additional/misto out/etc/
+	@mkdir -p out/var/local/bluez
+	@ln -s /etc/bluetooth/dopplerAudio.conf out/var/local/bluez/audio.conf
+	@echo "sshd:x:1000:" >> out/etc/group
+	@echo "sshd:x:1000:1000:SSH drop priv user:/:/bin/false" >> out/etc/passwd
+	@mkdir -p out/var/empty
+	@chmod g-w out/var/empty
+	@chmod o-w out/var/empty
+	@mkdir -p out/var/run/dbus
+	@rm -rf out/etc/udhcp*
+	@rm -f out/etc/hosts out/etc/hostname
+	@cp -ra br2echo/target/etc/hosts out/etc/
+	@cp -ra br2echo/target/etc/hostname out/etc/
+	# network
+	@cp -ra br2echo/target/etc/network/interfaces out/etc/network/
+	@cp -ra br2echo/target/usr/share/udhcpc/default.script out/usr/share/udhcpc/
+	@cp -ra br2echo/target/usr/sbin/wpa_supplicant out/usr/bin/
+	# applications and libraries
+	@cp -ra br2echo/target/usr/bin/scp out/usr/bin/
+	@cp -ra br2echo/target/usr/bin/ssh* out/usr/bin/
+	@cp -ra br2echo/target/usr/sbin/ssh* out/usr/sbin/
+	@cp -ra br2echo/target/usr/lib/libncurses* out/usr/lib/
+	@cp -ra br2echo/target/usr/bin/nano out/usr/bin/
+	@cp -ra br2echo/target/usr/lib/libpopt* out/usr/lib/
+	@cp -ra br2echo/target/usr/bin/rsync out/usr/bin/
+	@cp -ra br2echo/target/usr/bin/mkfifo out/usr/bin/
+	@cp -ra br2echo/target/usr/bin/du out/usr/bin/
+	@cp -ra br2echo/target/usr/bin/killall out/usr/bin/
+	@cp -ra br2echo/target/usr/lib/libbsd* out/usr/lib/
+	@rm -f out/usr/bin/nc
+	@cp -ra br2echo/target/usr/bin/nc out/usr/bin/
+	@cp -ra br2echo/target/usr/lib/libsox* out/usr/lib/
+	@cp -ra br2echo/target/usr/lib/libltdl* out/usr/lib/
+	@cp -ra br2echo/target/usr/lib/libmagic* out/usr/lib/
+	@cp -ra br2echo/target/usr/lib/libFLAC* out/usr/lib/
+	@cp -ra br2echo/target/usr/lib/libid3tag* out/usr/lib/
+	@cp -ra br2echo/target/usr/lib/libmad* out/usr/lib/
+	@cp -ra br2echo/target/usr/lib/libjson-c* out/usr/lib/
+	@cp -ra br2echo/target/usr/lib/libwavpack* out/usr/lib/
+	@cp -ra br2echo/target/usr/bin/sox out/usr/bin/
+	@cp -ra br2echo/target/usr/lib/libportaudio* out/usr/lib/
+	@cp -ra br2echo/target/usr/lib/libespeak* out/usr/lib/
+	@cp -ra br2echo/target/usr/share/espeak-data out/usr/share/
+	@cp -ra br2echo/target/usr/bin/espeak out/usr/bin/
+	@cp -ra br2echo/target/usr/bin/aespipe out/usr/bin/
+	@cp -ra br2echo/target/usr/lib/libstdc* out/usr/lib/
+	@cp -ra br2echo/target/usr/bin/qemu* out/usr/bin/
+	@cp -ra br2echo/target/usr/bin/screen* out/usr/bin/
+	# finally make sure busybox is correctly installed and the oldest libc is removed
+	@cp -ra br2echo/target/bin/busybox out/bin/
+	@rm -f out/lib/*2.12.2*
+	@echo DONE
