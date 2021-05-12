@@ -341,7 +341,7 @@ $(foreach f,$(DL_FILE_NAMES),$(eval $(call EXTRACT_rule,$(f))))
 
 clean:
 	rm -f dl/*.ipk.done
-	rm -rf orig
+	rm -rf orig out
 	@echo "cleanup done"
 
 download: $(DL_FILE_NAMES)
@@ -435,4 +435,5 @@ merge: extract br2echo/images/rootfs.tar
 	# finally make sure busybox is correctly installed and the oldest libc is removed
 	@cp -ra br2echo/target/bin/busybox out/bin/
 	@rm -f out/lib/*2.12.2*
+	touch out/.stamp_done
 	@echo DONE
