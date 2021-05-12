@@ -35,7 +35,13 @@ case "$1" in
 	/usr/local/bin/buttond &
 	/usr/sbin/bluetoothd
 	/usr/sbin/hciattach -n /dev/ttyO2 ath3k 3000000 flow nosleep DEADBEEFCAFE &
+	# turn LED ring off:
 	/usr/local/bin/btmd-ng
+	until /usr/local/bin/lipc-get-prop com.doppler.ledd Pattern >/dev/null 2>/dev/null
+	do
+		sleep 0.25
+	done
+	/usr/local/bin/lipc-set-prop com.doppler.ledd Pattern off
 
 	echo "OK"
 	;;
