@@ -29,7 +29,7 @@ The docking station wasn't suitable enough for longer periods of work, so finall
 ![The soldered bottom board][soldered]
 
 I noticed at an early point that there were no drivers for the [microphones][ifixit], and it took me ages to figure out that there was already a driver for the codec connected to the speaker, but it wasn’t easy to get it running.
-I first had some success with the microphones by porting the driver of another Echo device for the 4.14 kernel, and later even upstreamed the speaker part, which will land in [5.12][l512].
+I first had some success with the microphones by porting the driver of another Echo device for the 4.14 kernel, and later even upstreamed the speaker part, which was released with [5.12][l512]. (And more fixes came for [5.13][l513])
 
 So with the microphones working on an open system, I tried [ODAS][odas] to filter out my voice. Bad news: the Echo was by far too slow for that task. The original firmware uses the built-in DSP for that task, but guess what, the drivers are only available for [2.6.x kernels][dsp1], or at best in a broken state until [3.16][dsp2]. And even if I had the drivers, the DSP code would still be proprietary. So what to do?
 
@@ -80,6 +80,7 @@ and Zebediah Figura for spell/style fixes
 [l56]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm/boot/dts/omap3-echo.dts
 [ifixit]: https://de.ifixit.com/Teardown/Amazon+Echo+Teardown/33953
 [l512]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e5a58ad1cdc882ea4ef6fdd47b1018bfaac49b61
+[l513]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/arch/arm/boot/dts/omap3-echo.dts
 [odas]: https://github.com/introlab/odas
 [dsp1]: https://elinux.org/BeagleBoard/DSP_Howto
 [dsp2]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=f190be7f39a5e480ddc5e0f49bbe670feb328c32
