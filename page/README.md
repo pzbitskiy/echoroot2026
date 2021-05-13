@@ -49,7 +49,7 @@ Time for a demo :)
 </div>
 
 ## What's next?
-* As soon as I have time, I'll start adding some components of my endeavor in this [repository][repo]. The rootfs creation is a good first candidate I think.
+* As soon as I have time, I'll start adding some components of my endeavor in this [repository][repo]. The rootfs creation is a good first candidate I think. &#9745;
 * The system can now control every relevant lights, can tell jokes, and more. A logical next step might be to connect it to an assistant like [Mycroft][mycroft].
   On the other hand I'm happy as it is now, just nice to see there are upgrades available.
 * As multiple wake-words are allowed (see the demo video), I plan to add one for my other hobby project.
