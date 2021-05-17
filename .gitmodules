@@ -5,3 +5,6 @@
 [submodule "u-boot"]
 	path = u-boot
 	url = https://gitlab.com/AndreRH/u-boot-echo
+[submodule "voice/porcupine"]
+	path = voice/porcupine
+	url = https://github.com/Picovoice/porcupine
