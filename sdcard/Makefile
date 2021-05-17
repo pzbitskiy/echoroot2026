@@ -4,11 +4,11 @@ all: images/sdcard.img
 clean:
 	rm -rf images/
 
-images/rootfs.ext2:
+images/rootfs.ext3:
 	@mkdir -p images
 	fakeroot -- genext2fs -z -b 1024000 -N 24000 -d "../rootfs/out" "$@"
 	tune2fs -U random "$@"
-	tune2fs -O "filetype,sparse_super" -L "echoroot" "$@"
+	tune2fs -j -J size=1 -O "filetype,sparse_super" -L "echoroot" "$@"
 	e2fsck -pDf "$@" || true
 	tune2fs -c 0 -i 0 "$@"
 
@@ -21,7 +21,7 @@ images/u-boot.bin:
 	cp ../u-boot/MISTO_SD/u-boot.bin $@
 
 
-images/sdcard.img: images/rootfs.ext2 images/MLO images/u-boot.bin
+images/sdcard.img: images/rootfs.ext3 images/MLO images/u-boot.bin
 	rm -rf genimage.tmp
 	../rootfs/br2echo/host/usr/bin/genimage \
 	--rootpath "images" \
