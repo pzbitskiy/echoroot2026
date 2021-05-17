@@ -18,7 +18,7 @@ images/MLO:
 
 images/u-boot.bin:
 	@mkdir -p images
-	cp ../u-boot/u-boot.bin $@
+	cp ../u-boot/MISTO_SD/u-boot.bin $@
 
 
 images/sdcard.img: images/rootfs.ext2 images/MLO images/u-boot.bin
