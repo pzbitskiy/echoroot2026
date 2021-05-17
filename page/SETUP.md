@@ -81,6 +81,14 @@ ifup wlan0
 ```
 Now you can even connect to it via SSH.
 
+## Backup
+After setting up the Wifi it is recommended to make a backup of the internal storage.
+For example the following command issued on a Linux host while the Echo is booted from SD card should do the trick:
+```
+ssh root@<IP of your Echo> dd if=/dev/mmcblk1 bs=8M | dd of=EchoBackup.dd bs=8M
+```
+Note that this will produce a 4GB file, but you can gzip it afterwards.
+
 ## Bluetooth
 On your Smartphone switch on Bluetooth searching mode, then on the Echo execute:
 ```
