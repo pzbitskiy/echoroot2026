@@ -22,7 +22,10 @@ u-boot/MISTO_SD/include/config.mk: u-boot/Makefile
 u-boot/MISTO_SD/u-boot.bin: u-boot/MISTO_SD/include/config.mk
 	$(MAKE) -C u-boot O=MISTO_SD
 
-rootfs/out/.stamp_post: u-boot/MISTO_INT/u-boot.bin rootfs/out/.stamp_done
+voice/porcupine_demo_shm: voice/porcupine_demo_shm.c voice/Makefile
+	$(MAKE) -C voice porcupine_demo_shm
+
+rootfs/out/.stamp_post: u-boot/MISTO_INT/u-boot.bin voice/porcupine_demo_shm rootfs/out/.stamp_done
 	@echo "Doing some post-modifications in rootfs"
 	@rm -f rootfs/out/.stamp_done
 	@mkdir -p rootfs/out/usr/share/MISTO_INT
@@ -34,6 +37,7 @@ rootfs/out/.stamp_post: u-boot/MISTO_INT/u-boot.bin rootfs/out/.stamp_done
 	@echo "Installing porcupine files"
 	cp -f voice/porcupine/lib/common/porcupine_params* rootfs/out/usr/share/porcupine/
 	cp -rf voice/porcupine/resources/keyword_files* rootfs/out/usr/share/porcupine/
+	cp -f voice/porcupine_demo_shm rootfs/out/usr/bin/
 	touch rootfs/out/.stamp_post
 
 sdcard/images/sdcard.img: u-boot/MISTO_SD/u-boot.bin rootfs/out/.stamp_post
