@@ -40,7 +40,7 @@ that doesn't matter much for voice recognition.
 
 Hint: Other LED patterns can be found on the Echo in /usr/local/etc/ledd
 
-I recommend to try it with [voice2json][voice2json]. After setting voice2json up according to the
+I recommend to try [voice2json][voice2json]. After setting voice2json up according to the
 voice2json documentation you can run this on the host:
 ```
 nc -dNlp 13388 | cat voice/5s.wavheader - | voice2json transcribe-wav | voice2json recognize-intent

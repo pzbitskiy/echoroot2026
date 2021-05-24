@@ -45,8 +45,7 @@ Now place the microSD in the adapter connected to the Echo and turn it on.
 
 ## Status
 Currently the system only is intented to run from the external SD card.
-I plan to add installation instructions to make it the main OS on the internal storage,
-but first I have to provide backup instructions :)
+I plan to add installation instructions to make it the main OS on the internal storage.
 
 ## Login
 The default `root` password is:
