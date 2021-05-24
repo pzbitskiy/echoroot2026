@@ -22,10 +22,10 @@ u-boot/MISTO_SD/include/config.mk: u-boot/Makefile
 u-boot/MISTO_SD/u-boot.bin: u-boot/MISTO_SD/include/config.mk
 	$(MAKE) -C u-boot O=MISTO_SD
 
-voice/porcupine_demo_shm: voice/porcupine_demo_shm.c voice/Makefile
+voice/porcupine_demo_shm: voice/porcupine_demo_shm.c voice/Makefile rootfs/out/.stamp_done
 	$(MAKE) -C voice porcupine_demo_shm
 
-voice/porcupine_send_shm: voice/porcupine_send_shm.c voice/Makefile
+voice/porcupine_send_shm: voice/porcupine_send_shm.c voice/Makefile rootfs/out/.stamp_done
 	$(MAKE) -C voice porcupine_send_shm
 
 rootfs/out/.stamp_post: u-boot/MISTO_INT/u-boot.bin voice/porcupine_demo_shm voice/porcupine_send_shm rootfs/out/.stamp_done
