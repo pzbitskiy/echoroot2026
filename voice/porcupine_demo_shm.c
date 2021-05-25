@@ -24,7 +24,7 @@ void interrupt_handler(int _) {
 }
 
 int main(int argc, char *argv[]) {
-    if (argc != 6) {
+    if (argc != 5) {
         fprintf(stderr, "usage : %s library_path model_path keyword_path sensitivity\n", argv[0]);
         exit(1);
     }
