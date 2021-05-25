@@ -30,13 +30,12 @@ voice/porcupine_send_shm: voice/porcupine_send_shm.c voice/Makefile rootfs/out/.
 
 rootfs/out/.stamp_post: u-boot/MISTO_INT/u-boot.bin voice/porcupine_demo_shm voice/porcupine_send_shm rootfs/out/.stamp_done
 	@echo "Doing some post-modifications in rootfs"
-	@rm -f rootfs/out/.stamp_done
 	@mkdir -p rootfs/out/usr/share/MISTO_INT
 	@cp -f u-boot/MISTO_INT/u-boot.bin rootfs/out/usr/share/MISTO_INT/
 	@mkdir -p rootfs/out/usr/share/porcupine
 	@cp -f voice/porcupine/lib/beaglebone/libpv_porcupine.so rootfs/out/usr/lib/
 	@echo "Patching the libpv_porcupine.so for non-hardfloat loading"
-	@printf '\x02' | dd of=rootfs/out/usr/lib/libpv_porcupine.so bs=1 seek=37 count=1 conv=notrunc
+	@echo -n 2 | awk '{ printf "%c", $$1 };' | dd of=rootfs/out/usr/lib/libpv_porcupine.so bs=1 seek=37 count=1 conv=notrunc
 	@echo "Installing porcupine files"
 	cp -f voice/porcupine/lib/common/porcupine_params* rootfs/out/usr/share/porcupine/
 	cp -rf voice/porcupine/resources/keyword_files* rootfs/out/usr/share/porcupine/
@@ -45,5 +44,6 @@ rootfs/out/.stamp_post: u-boot/MISTO_INT/u-boot.bin voice/porcupine_demo_shm voi
 	touch rootfs/out/.stamp_post
 
 sdcard/images/sdcard.img: u-boot/MISTO_SD/u-boot.bin rootfs/out/.stamp_post
-	@rm -f rootfs/out/.stamp_post
+	@rm -f rootfs/out/.stamp_done rootfs/out/.stamp_post
+	@rm -f sdcard/images/rootfs.ext3
 	make -C sdcard

@@ -3,6 +3,7 @@
 ## Building
 In case you want to build it yourself instead of using prebuilt images, you'll need:
 
+* GNU Awk >= 4.2.1 or mawk >= 1.3.3
 * binutils >= 2.34
 * An arm-linux-gnueabihf-gcc-7 toolchain for the >10 years old u-boot
 * curl
