@@ -1,7 +1,8 @@
 # The electronics part
 
 ## What you need
-I recommend to have a USB to UART (TTL) converter. I used a "D-SUN USB to TTL" [in red][dsun], which also provides 3.3V and 5V output.
+An old Echo, Gen 1, at max. with a Copyright of 2016, later editions won't work.
+Then, I recommend to have a USB to UART (TTL) converter. I used a "D-SUN USB to TTL" [in red][dsun], which also provides 3.3V and 5V output.
 For the SD card you will want to use a microSD for the image, but a microSD to SD card adapter for soldering.
 And yes, you need a soldering iron. It's possible to avoid it, but that makes things more complicated I think.
 For connecting the Echo itself you can go with pogo-pins and some 3D printing, or be on the safe side and solder wires on it as well.
