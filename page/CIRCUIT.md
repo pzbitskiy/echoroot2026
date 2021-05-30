@@ -7,11 +7,13 @@ And yes, you need a soldering iron. It's possible to avoid it, but that makes th
 For connecting the Echo itself you can go with pogo-pins and some 3D printing, or be on the safe side and solder wires on it as well.
 
 ## The circuit
-That's how I did it:
+That's how it could be done, just note that you also can power the microSD from another source like the 3.3V of a USB to UART converter:
 
 ![Wiring the Echo][wiring]
 
 The circle is supposed to mark the edge of the Echo when viewed from below.
+
+Thanks to Kent for discovering the 3.3V output on TP19!
 
 [dsun]: https://www.cpmspectrepi.uk/raspberry_pi/MoinMoinExport/USBtoTtlSerialAdapters.html
 
