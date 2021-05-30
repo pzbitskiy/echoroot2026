@@ -79,7 +79,7 @@ iface wlan0 inet static
 	pre-up wpa_supplicant -B -D nl80211 -c /etc/wpa_supplicant.conf -i wlan0
 	post-down killall -q wpa_supplicant
 ```
-Additionally in both cases /etc/wpa_supplicant.conf should look like:
+Additionally in __both__ cases /etc/wpa_supplicant.conf should look like:
 ```
 ctrl_interface=/var/run/wpa_supplicant
 ap_scan=1
