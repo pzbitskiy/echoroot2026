@@ -42,10 +42,12 @@ dd if=sdcard.img of=/dev/sdX bs=8M; sync
 ```
 You can also use [USBImager][imager] or [balenaEtcher][etcher] to do that.
 
-Now place the microSD in the adapter connected to the Echo and turn it on.
+Now place the microSD in the adapter connected to the Echo and turn it on. Or if you are on a system
+like Linux, where you easily can edit ext3 filesystems, you might want to consider adjusting the
+config files (e.g. for Wifi) first.
 
 ## Status
-Currently the system only is intented to run from the external SD card.
+Currently the system only is intended to run from the external SD card.
 I plan to add installation instructions to make it the main OS on the internal storage.
 
 ## Login
@@ -55,15 +57,29 @@ echo
 ```
 
 ## Wifi
-To join a Wifi, add those lines to /etc/network/interfaces:
+To join a Wifi using __DHCP__, /etc/network/interfaces should look like:
 ```
+auto lo
+iface lo inet loopback
 auto wlan0
 iface wlan0 inet dhcp
 	udhcpc_opts -t 16
 	pre-up wpa_supplicant -B -D nl80211 -c /etc/wpa_supplicant.conf -i wlan0
 	post-down killall -q wpa_supplicant
 ```
-Additionally /etc/wpa_supplicant.conf should look like:
+To join a Wifi using a __static IP address__, /etc/network/interfaces should look like:
+```
+auto lo
+iface lo inet loopback
+auto wlan0
+iface wlan0 inet static
+	address <Device IP, e.g. 192.168.1.123>
+	netmask <Network mask, e.g. 255.255.255.0>
+	gateway <Gateway/Router IP, e.g. 192.168.1.1>
+	pre-up wpa_supplicant -B -D nl80211 -c /etc/wpa_supplicant.conf -i wlan0
+	post-down killall -q wpa_supplicant
+```
+Additionally in both cases /etc/wpa_supplicant.conf should look like:
 ```
 ctrl_interface=/var/run/wpa_supplicant
 ap_scan=1
