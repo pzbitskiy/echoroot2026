@@ -14,7 +14,7 @@ That's how it could be done, just note that you also can power the microSD from 
 
 The circle is supposed to mark the edge of the Echo when viewed from below.
 
-Thanks to Kent for discovering the 3.3V output on TP19!
+Thanks to Kent Sørensen for discovering the 3.3V output on TP19!
 
 [dsun]: https://www.cpmspectrepi.uk/raspberry_pi/MoinMoinExport/USBtoTtlSerialAdapters.html
 
