@@ -432,6 +432,19 @@ merge: extract br2echo/images/rootfs.tar
 	@cp -ra br2echo/target/usr/lib/libstdc* out/usr/lib/
 	@cp -ra br2echo/target/usr/bin/qemu* out/usr/bin/
 	@cp -ra br2echo/target/usr/bin/screen* out/usr/bin/
+	@cp -ra br2echo/target/usr/bin/mpc out/usr/bin/
+	@cp -ra br2echo/target/usr/bin/mpd out/usr/bin/
+	@cp -ra br2echo/target/usr/bin/ympd out/usr/bin/
+	@cp -ra br2echo/target/etc/mpd.conf out/etc/
+	@cp -ra br2echo/target/etc/init.d/S95mpd out/etc/init.d/
+	@cp -ra br2echo/target/usr/lib/libmpdclient* out/usr/lib/
+	@cp -ra br2echo/target/usr/lib/libyajl* out/usr/lib/
+	@cp -ra br2echo/target/usr/lib/libaudiofile* out/usr/lib/
+	@cp -ra br2echo/target/usr/lib/libavcodec* out/usr/lib/
+	@cp -ra br2echo/target/usr/lib/libavformat* out/usr/lib/
+	@cp -ra br2echo/target/usr/lib/libavutil* out/usr/lib/
+	@cp -ra br2echo/target/usr/lib/libbz2* out/usr/lib/
+	@cp -ra br2echo/target/usr/lib/libswresample* out/usr/lib/
 	# finally make sure busybox is correctly installed and the oldest libc is removed
 	@cp -ra br2echo/target/bin/busybox out/bin/
 	@rm -f out/lib/*2.12.2*
