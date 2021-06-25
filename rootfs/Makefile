@@ -445,6 +445,14 @@ merge: extract br2echo/images/rootfs.tar
 	@cp -ra br2echo/target/usr/lib/libavutil* out/usr/lib/
 	@cp -ra br2echo/target/usr/lib/libbz2* out/usr/lib/
 	@cp -ra br2echo/target/usr/lib/libswresample* out/usr/lib/
+	@cp -ra br2echo/target/usr/bin/smb* out/usr/bin/
+	@cp -ra br2echo/target/usr/lib/libsam* out/usr/lib/
+	@cp -ra br2echo/target/usr/lib/libsmb* out/usr/lib/
+	@cp -ra br2echo/target/usr/lib/libtevent* out/usr/lib/
+	@cp -ra br2echo/target/usr/lib/samba out/usr/lib/
+	@cp -ra br2echo/target/usr/lib/libndr* out/usr/lib/
+	@cp -ra br2echo/target/usr/lib/libwb* out/usr/lib/
+	@cp -ra br2echo/target/usr/lib/libdcerpc* out/usr/lib/
 	# finally make sure busybox is correctly installed and the oldest libc is removed
 	@cp -ra br2echo/target/bin/busybox out/bin/
 	@rm -f out/lib/*2.12.2*
