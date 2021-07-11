@@ -113,8 +113,58 @@ lipc-set-prop com.doppler.btmd.bluetooth enablePhonePairing 1
 This will make it discoverable for 5 Minutes as something like `dp-dev-0`.
 Simply pair your Smartphone with it.
 
+## MPD
+Storing music on the Echo is likely a bad idea for huge collections. But using MPD there's a
+[good way][archmpd] using a second device as server
+(which can be the same device used for voice recognition).
+On the host (which stores the Music) your /etc/mpd.conf should look like:
+```
+pid_file            "/run/mpd/mpd.pid"
+playlist_directory  "/var/lib/mpd/playlists"
+music_directory     "/path/to/your/music/"
+
+database {
+    plugin           "simple"
+    path             "/var/lib/mpd/mpd.db"
+    cache_directory  "/var/lib/mpd/cache"
+}
+
+audio_output {
+    type  "null"
+    name  "This server does not need to play music, but it can"
+}
+```
+And on the Echo it should look like:
+```
+pid_file            "/run/mpd/mpd.pid"
+playlist_directory  "/var/lib/mpd/playlists"
+
+# WebDAV setup
+music_directory     "http://HOSTIP:8080/"
+
+database {
+    plugin  "proxy"
+    host    "HOSTIP"
+    port    "6600"
+}
+
+audio_output {
+        type            "pulse"
+        name            "pulse audio"
+}
+```
+Replace HOSTIP with the IP of your host. And on the host restart MPD and run:
+```
+rclone serve webdav --addr HOSTIP:8080 -v /path/to/your/music/
+```
+Now you can control the MPD on your Echo with mpc, ympd, apps like [MALP][malp] or all those other
+projects around MPD.
+
+
 [imager]: https://gitlab.com/bztsrc/usbimager
 [etcher]: https://www.balena.io/etcher/
+[archmpd]: https://wiki.archlinux.org/title/Music_Player_Daemon/Tips_and_tricks#Music_streaming_with_the_satellite_setup
+[malp]: https://f-droid.org/en/packages/org.gateshipone.malp/
 
 
 [![Flattr Button](http://api.flattr.com/button/button-static-50x60.png "Flattr This!")](https://flattr.com/@andre_opensource "andre_opensource")
