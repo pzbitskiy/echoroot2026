@@ -382,6 +382,7 @@ merge: extract br2echo/images/rootfs.tar
 	@tail -n +2 out/etc/passwd >> out/etc/passwd.new
 	@mv out/etc/passwd.new out/etc/passwd
 	# tweak more things
+	@cp -a additional/install.sh out/home/root/
 	@cp -a additional/S30misto out/etc/init.d/
 	@cp -a additional/S50pulseaudio out/etc/init.d/
 	@cp -ra additional/misto out/etc/

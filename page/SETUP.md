@@ -46,9 +46,20 @@ Now place the microSD in the adapter connected to the Echo and turn it on. Or if
 like Linux, where you easily can edit ext3 filesystems, you might want to consider adjusting the
 config files (e.g. for Wifi) first.
 
-## Status
-Currently the system only is intended to run from the external SD card.
-I plan to add installation instructions to make it the main OS on the internal storage.
+## Installation on internal storage
+On your microSD are 3 partitions, one for booting and two times the rootfs. The second rootfs will
+be flashed to the Echo by running the installation script after booting from microSD:
+```
+# DANGER WILL ROBINSON DANGER! This will overwrite your original Echo firmware! Make a Backup first!
+./install.sh
+```
+See the Backup section below in case you want to be able to go back to your original Echo firmware!
+Note that changes to your setup, like wifi configuration and such, won't be applied to the internal
+storage. If you want to keep it, mount `/dev/mmcblk1p6` somewhere and copy the changes over and
+unmount it.
+
+When you're done, you can simply boot the Echo without the microSD inserted and should end up with
+the login prompt you know.
 
 ## Login
 The default `root` password is:
