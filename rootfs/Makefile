@@ -331,7 +331,7 @@ define EXTRACT_rule
 $(1).done: $(1)
 	@mkdir -p orig
 	@mkdir -p /tmp/echoroot_tmp/$(1)
-	ar --output=/tmp/echoroot_tmp/$(1) x $(1) data.tar.gz
+	cd /tmp/echoroot_tmp/$(1) && ar x $(CURDIR)/$(1) data.tar.gz
 	tar -C orig -xzf /tmp/echoroot_tmp/$(1)/data.tar.gz
 	@rm -rf /tmp/echoroot_tmp/$(1)
 	@touch $(1).done
