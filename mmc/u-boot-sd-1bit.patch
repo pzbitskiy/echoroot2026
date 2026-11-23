@@ -1,0 +1,45 @@
+diff --git a/Makefile b/Makefile
+index f7c2def40f..5b9d00ea6b 100644
+--- a/Makefile
++++ b/Makefile
+@@ -3191,6 +3191,9 @@ misto_int_defconfig :	unconfig
+ misto_sd_defconfig :	unconfig
+ 	@$(MKCONFIG) $(@:_config=) arm arm_cortexa8 lab126 ti omap3
+ 
++misto_sd1bit_defconfig :	unconfig
++	@$(MKCONFIG) $(@:_config=) arm arm_cortexa8 lab126 ti omap3
++
+ omap3_pandora_config :	unconfig
+ 	@$(MKCONFIG) $(@:_config=) arm arm_cortexa8 pandora NULL omap3
+ 
+diff --git a/board/ti/lab126/evm.c b/board/ti/lab126/evm.c
+index 19e8b3e905..3aa388c746 100755
+--- a/board/ti/lab126/evm.c
++++ b/board/ti/lab126/evm.c
+@@ -875,7 +875,13 @@ int board_eth_init(bd_t *bis)
+ 
+ int board_mmc_init(bd_t *bis)
+ {
++#ifdef CONFIG_LAB126_SD_1BIT
++	/* SD slot: 1-bit, default speed only (diagnostic build) */
++	int ret = omap_mmc_init(0, MMC_MODE_4BIT | MMC_MODE_HS |
++				MMC_MODE_HS_52MHz, 0, -1, -1);
++#else
+ 	int ret = omap_mmc_init(0, 0, 0, -1, -1);
++#endif
+ 	ret |= omap_mmc_init(1, 0, 0, -1, -1);
+ 
+ 	return ret;
+diff --git a/include/configs/misto_sd1bit_defconfig.h b/include/configs/misto_sd1bit_defconfig.h
+new file mode 100644
+index 0000000000..75c0f7a00e
+--- /dev/null
++++ b/include/configs/misto_sd1bit_defconfig.h
+@@ -0,0 +1,7 @@
++/*
++ * Diagnostic variant of misto_sd_defconfig: the SD slot stays in 1-bit mode
++ * at default speed (no 4-bit, no high speed), like X-Loader uses it. For SD
++ * wiring whose return path cannot take four data lines switching at once.
++ */
++#include "misto_sd_defconfig.h"
++#define CONFIG_LAB126_SD_1BIT 1
