@@ -1,0 +1,35 @@
+# Speech services for Home Assistant, run on any Docker host HA can reach.
+# In HA add each one with the "Wyoming Protocol" integration:
+#   speech-to-text  <this host>:10300
+#   text-to-speech  <this host>:10200
+# See README.md in this folder.
+
+services:
+  # The official Wyoming speech-to-text server with Qwen3-ASR 0.6B, which
+  # understood recordings from the Echo best (README.md, "Accuracy").
+  #   --vad-endpointing 0.5  end of speech is decided here, after 0.5 s of
+  #                          silence, instead of by Home Assistant (which
+  #                          offers only 0.25, 0.7 or 1.25 s)
+  #   --vad-clip             silence around the command is not transcribed
+  #   --cpu-threads 8        the default is 4
+  stt:
+    image: rhasspy/wyoming-whisper:3.9.1
+    command: >-
+      --language en --stt-library qwen3-asr
+      --vad-endpointing 0.5 --vad-clip --cpu-threads 8
+    # Parakeet instead: three times faster, less accurate on the Echo's audio.
+    # command: --language en --vad-endpointing 0.5
+    ports:
+      - "10300:10300"
+    volumes:
+      - ./stt-data:/data
+    restart: unless-stopped
+
+  tts:
+    image: rhasspy/wyoming-piper:2.5.4
+    command: --voice en_US-lessac-medium
+    ports:
+      - "10200:10200"
+    volumes:
+      - ./tts-data:/data
+    restart: unless-stopped

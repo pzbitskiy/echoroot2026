@@ -1,0 +1,29 @@
+# /etc/systemd/system/llm-gate.service
+# Trigger-word gate between Home Assistant and llama-server, see LLM.md.
+# Home Assistant's llama.cpp integration gets http://<this machine>:8090/v1.
+#
+#   --keep   words that start a question for the model and stay in it
+#   --strip  words that start one and are removed
+#   -v       also log the text of every sentence (journalctl -u llm-gate)
+#
+# To accept only requests that carry a key, put the key into
+# /etc/llm-gate.key (readable by the user below), add
+#   --api-key-file /etc/llm-gate.key
+# and enter the same key in Home Assistant.
+
+[Unit]
+Description=Trigger-word gate for llama-server
+After=network-online.target llama-server.service
+Wants=network-online.target
+
+[Service]
+User=llama
+Group=llama
+ExecStart=/usr/bin/python3 /opt/llm-gate/llm-gate.py \
+    --listen 0.0.0.0:8090 --backend http://127.0.0.1:8080 \
+    --keep explain --strip question,llm
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

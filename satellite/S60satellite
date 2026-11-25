@@ -1,0 +1,73 @@
+#!/bin/sh
+#
+# Starts Amazon's wake-word daemon (asrd) and echo-satellite, each restarted
+# if it exits. Runs after S30misto (audio, LEDs, buttons) and S50pulseaudio.
+# See ASRD.md and satellite/README.md.
+#
+
+DAEMON=${DAEMON:-/usr/bin/echo-satellite}
+ASRD=${ASRD:-/usr/local/bin/asrd}
+PIDDIR=${PIDDIR:-/var/run}
+
+# supervise <name> <command...>: run the command, start it again 2 s after it exits
+supervise() {
+	name=$1
+	shift
+	(
+		trap 'kill $child 2>/dev/null; exit 0' TERM INT
+		while :; do
+			"$@" &
+			child=$!
+			wait $child
+			sleep 2
+		done
+	) >/dev/null 2>&1 &
+	echo $! > $PIDDIR/$name.pid
+}
+
+halt() {
+	[ -f $PIDDIR/$1.pid ] || return 0
+	kill "$(cat $PIDDIR/$1.pid)" 2>/dev/null
+	rm -f $PIDDIR/$1.pid
+}
+
+start() {
+	printf "Starting satellite: "
+	# asrd is linked against a name the image lacks, and its model loader
+	# fails with a locale that is not installed
+	ln -sf libdavs.so /usr/lib/libdavs.so.1
+	unset LANG LANGUAGE
+	export LC_ALL=C
+	supervise asrd $ASRD /BMicsOut.shm /BAsrMetadata.shm
+	# -s: log to syslog. The satellite selects the wake-word model (it
+	# may kill asrd to have it restarted with another model) and enables
+	# asrd's result signals whenever asrd reports ready.
+	supervise echo-satellite $DAEMON -s $SATELLITE_OPTS
+	echo "OK"
+}
+
+stop() {
+	printf "Stopping satellite: "
+	halt echo-satellite
+	halt asrd
+	echo "OK"
+}
+
+case "$1" in
+  start)
+	start
+	;;
+  stop)
+	stop
+	;;
+  restart|reload)
+	stop
+	sleep 1
+	start
+	;;
+  *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+exit $?

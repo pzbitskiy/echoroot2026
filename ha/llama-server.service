@@ -1,0 +1,35 @@
+# /etc/systemd/system/llama-server.service
+# The language model for Home Assistant, see LLM.md. Listens on this machine
+# only; Home Assistant talks to llm-gate.service, which talks to this.
+#
+# Adjust the path of llama-server. To use a model file that is already on the
+# machine, replace the "-hf ... --no-mmproj" line with "-m /path/to/file.gguf".
+#
+#   --no-mmproj      do not load the vision part of the model
+#   --parallel 1     one request at a time, with the whole context
+#   --reasoning off  no thinking phase before the answer. An older llama-server
+#                    without this option takes
+#                    --chat-template-kwargs '{"enable_thinking":false}'
+#   --top-k, --min-p Qwen's recommended sampling; Home Assistant sends
+#                    temperature and top-p itself
+
+[Unit]
+Description=llama-server (Qwen3.5 4B for Home Assistant)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=llama
+Group=llama
+# Where "-hf" keeps the downloaded model (2.9 GB).
+Environment=LLAMA_CACHE=/var/lib/llama
+ExecStart=/usr/local/bin/llama-server \
+    -hf unsloth/Qwen3.5-4B-GGUF:UD-Q4_K_XL --no-mmproj \
+    --host 127.0.0.1 --port 8080 --alias qwen3.5-4b \
+    --ctx-size 8192 --parallel 1 --threads 8 \
+    --reasoning off --top-k 20 --min-p 0
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

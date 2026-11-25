@@ -3,7 +3,7 @@
 How to rebuild `sdcard.img` from this repository in 2026, what the build
 depends on, and how to add software to the image.
 
-**Status:** done on 2026-11-20 on Linux Mint 22.3 with Docker 29. The result
+**Status:** done on Ubuntu Linux with Docker 29. The result
 was compared with an image built from the same commit in June 2024: the same
 7,749 files, every Amazon-supplied file byte-identical (kernel, DSP firmware,
 `asrd`, `ledd`, `libpryon.so`, ...). 59 files differ, all of them recompiled
@@ -35,7 +35,8 @@ after changing only the rootfs merge or the image takes about 30 seconds.
 | Merge both | `rootfs/Makefile` (`merge`) | `rootfs/out`: Amazon's tree with glibc 2.23, busybox, init scripts and selected programs from Buildroot copied over it |
 | Build the two bootloaders | `u-boot` (2010.06 fork), configs `misto_sd` and `misto_int` | `u-boot/MISTO_SD/u-boot.bin` for the card, `u-boot/MISTO_INT/u-boot.bin` for internal flash |
 | Build the voice demos | `voice/Makefile` | `porcupine_demo_shm`, `porcupine_send_shm` |
-| Post-step | top-level `Makefile` | Porcupine library and models, the internal u-boot and the demos copied into `rootfs/out` |
+| Build the voice satellite | `satellite/Makefile` | `satellite/echo-satellite` |
+| Post-step | top-level `Makefile` | Porcupine library and models, the internal u-boot, the demos and the satellite (`/usr/bin/echo-satellite`, `/etc/init.d/S60satellite`, `/etc/echo-satellite.conf`) copied into `rootfs/out` |
 | Assemble the image | `sdcard/Makefile`, `sdcard/genimage.cfg` | 16 MB FAT (`MLO`, `u-boot.bin`) plus two identical 1000 MB ext3 partitions |
 
 The first-stage loader `x-load/MLO` is a prebuilt binary in the repository and
@@ -52,7 +53,7 @@ is not rebuilt.
 | 155 source archives for Buildroot packages | upstream sites, with `sources.buildroot.net` as fallback | `rootfs/buildroot/dl` (554 MB) |
 | Build environment | Ubuntu 18.04 packages | Docker image `echoroot-build` |
 
-All of these were still downloadable on 2026-11-20. The Amazon package server
+All of these were still downloadable as 2026-11. The Amazon package server
 is the only source that cannot be replaced; the packages contain the kernel,
 the DSP firmware and the wake-word engine. Keep copies outside this machine:
 
@@ -144,6 +145,7 @@ Why a container, and why these choices:
 | `rootfs/br2echo/.config` | Refreshed with `olddefconfig` | See below |
 | `rootfs/br2echo/Makefile` | Header comment only | Rewritten by `olddefconfig` |
 | `.gitignore` | Build outputs added | `rootfs/dl`, `rootfs/orig`, `rootfs/out`, Buildroot output, images, logs |
+| `Makefile` | Builds `satellite/` and installs it in the post-step | The image starts as a Home Assistant voice satellite |
 
 The `.config` refresh: the committed file was written on a machine where
 Buildroot could not detect the host compiler version. With a detectable
@@ -192,6 +194,17 @@ Both ext3 partitions are identical. `install.sh` copies the third partition to
 the Echo's internal flash, so settings made on the second partition do not
 carry over unless they are also made on the third.
 
+The image contains the voice satellite and starts it at
+boot. Checked in the built `rootfs.ext3`: the three files are there, the
+binary and the init script with mode 755. An image built this way has not
+been booted; the same three files, copied by hand, start at boot on an Echo.
+Until `allow` is set in `/etc/echo-satellite.conf` (on both partitions) any
+host on the network can connect to the satellite and open the microphone.
+
+The image's bootloader for internal storage does not start without a powered
+serial adapter. [INSTALL.md](INSTALL.md), step 8, has the fix, and the whole
+sequence from a fresh card to a working device.
+
 ## Adding software
 
 Constraints that apply to anything added:
@@ -222,9 +235,9 @@ Libraries that exist only in Amazon's part of the image (`libshmbuffer.so`,
 `liblipc.so`, `libpryon.so`) have no headers. Link against the copies in
 `rootfs/orig/usr/local/lib` and declare the functions yourself.
 
-To include the program in the image, follow the pattern of the voice demos:
-build it in a rule in the top-level `Makefile` and copy it into `rootfs/out`
-in the `rootfs/out/.stamp_post` rule.
+To include the program in the image, follow the pattern of the voice demos
+and the satellite: build it in a rule in the top-level `Makefile` and copy it
+into `rootfs/out` in the `rootfs/out/.stamp_post` rule.
 
 ### A package that Buildroot knows
 
@@ -259,7 +272,7 @@ the image only for releases.
 | `rootfs/out` | Merged root filesystem | 89 MB |
 | `u-boot/MISTO_SD`, `u-boot/MISTO_INT` | Bootloader builds | small |
 | `sdcard/images` | `sdcard.img` and its parts | 3.0 GB |
-| `build.log*` | Logs from the builds on 2026-11-20 | |
+| `build.log*` | Logs from the builds | |
 
 `rootfs/br2echo/build` can be deleted to save space once the build works; the
 toolchain in `rootfs/br2echo/host` and the files in `target` are what later

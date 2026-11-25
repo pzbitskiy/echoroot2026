@@ -5,6 +5,7 @@ clean:
 	$(MAKE) -C rootfs clean
 	rm -rf u-boot/MISTO_INT
 	rm -rf u-boot/MISTO_SD
+	$(MAKE) -C satellite clean
 	$(MAKE) -C sdcard clean
 
 rootfs/out/.stamp_done: rootfs/buildroot/Makefile
@@ -28,7 +29,13 @@ voice/porcupine_demo_shm: voice/porcupine_demo_shm.c voice/Makefile rootfs/out/.
 voice/porcupine_send_shm: voice/porcupine_send_shm.c voice/Makefile rootfs/out/.stamp_done
 	$(MAKE) -C voice porcupine_send_shm
 
-rootfs/out/.stamp_post: u-boot/MISTO_INT/u-boot.bin voice/porcupine_demo_shm voice/porcupine_send_shm rootfs/out/.stamp_done
+# The voice satellite (satellite/README.md). It links against libraries in
+# rootfs/out, so the root filesystem has to exist first; a re-merged root
+# filesystem alone does not cause a rebuild.
+satellite/echo-satellite: $(wildcard satellite/*.c) satellite/sat.h satellite/Makefile | rootfs/out/.stamp_done
+	$(MAKE) -C satellite
+
+rootfs/out/.stamp_post: u-boot/MISTO_INT/u-boot.bin voice/porcupine_demo_shm voice/porcupine_send_shm satellite/echo-satellite rootfs/out/.stamp_done
 	@echo "Doing some post-modifications in rootfs"
 	@mkdir -p rootfs/out/usr/share/MISTO_INT
 	@cp -f u-boot/MISTO_INT/u-boot.bin rootfs/out/usr/share/MISTO_INT/
@@ -41,6 +48,10 @@ rootfs/out/.stamp_post: u-boot/MISTO_INT/u-boot.bin voice/porcupine_demo_shm voi
 	cp -rf voice/porcupine/resources/keyword_files* rootfs/out/usr/share/porcupine/
 	cp -f voice/porcupine_demo_shm rootfs/out/usr/bin/
 	cp -f voice/porcupine_send_shm rootfs/out/usr/bin/
+	@echo "Installing the voice satellite"
+	install -m 0755 satellite/echo-satellite rootfs/out/usr/bin/
+	install -m 0755 satellite/S60satellite rootfs/out/etc/init.d/
+	install -m 0644 satellite/echo-satellite.conf rootfs/out/etc/
 	touch rootfs/out/.stamp_post
 
 sdcard/images/sdcard.img: u-boot/MISTO_SD/u-boot.bin rootfs/out/.stamp_post

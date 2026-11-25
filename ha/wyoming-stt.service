@@ -1,0 +1,23 @@
+# /etc/systemd/system/wyoming-stt.service
+# Speech-to-text for Home Assistant (Wyoming protocol, port 10300), installed
+# without Docker as described in README.md, "Without Docker".
+
+[Unit]
+Description=Wyoming speech-to-text (Qwen3-ASR)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=wyoming
+Group=wyoming
+# Model and download caches all go to the data directory.
+Environment=HF_HOME=/var/lib/wyoming-stt XDG_CACHE_HOME=/var/lib/wyoming-stt
+ExecStart=/opt/wyoming-stt/bin/wyoming-faster-whisper \
+    --uri tcp://0.0.0.0:10300 --data-dir /var/lib/wyoming-stt \
+    --language en --stt-library qwen3-asr \
+    --vad-endpointing 0.5 --vad-clip --cpu-threads 8
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

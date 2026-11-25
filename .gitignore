@@ -18,3 +18,10 @@
 /voice/porcupine_send_shm
 /sdcard.img
 /build.log*
+/satellite/echo-satellite
+/satellite/*.o
+/satellite/test/out/
+/satellite/test/fixtures/
+/satellite/test/fuzz
+/satellite/tools/sndctl
+
